@@ -78,6 +78,11 @@ class FileResolver {
 		PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:*.class");
 		while (resources.hasMoreElements()) {
 			URL resource = resources.nextElement();
+			if (!"file".equals(resource.getProtocol())){
+				// skip package locations, which are not part of the local file system
+				// e.g. the package may be found inside a jar, too
+				continue;
+			}
 			Files.walkFileTree(Paths.get(resource.toURI()), new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
